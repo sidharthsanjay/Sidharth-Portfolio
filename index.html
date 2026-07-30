@@ -521,6 +521,78 @@
   .headline .cycle.swap{opacity:0; transform:translateY(6px);}
 
   .btn{ position:relative; }
+
+  /* Project screenshot gallery */
+  .shot-row{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+    flex-wrap:wrap;
+  }
+  .shot-thumb{
+    position:relative;
+    width:calc(33.333% - 7px);
+    border-radius:10px;
+    overflow:hidden;
+    cursor:pointer;
+    border:1px solid #ECE9FA;
+    background:var(--surface);
+  }
+  .shot-thumb img{
+    width:100%;
+    display:block;
+    aspect-ratio: 16/10;
+    object-fit:cover;
+    transition: transform .35s ease;
+  }
+  .shot-thumb:hover img{transform:scale(1.06);}
+  .shot-cap{
+    position:absolute;
+    bottom:0; left:0; right:0;
+    background:linear-gradient(0deg, rgba(20,20,46,0.82), transparent);
+    color:#fff;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.62rem;
+    padding:16px 8px 6px;
+    letter-spacing:0.02em;
+  }
+
+  .lightbox{
+    position:fixed;
+    inset:0;
+    background:rgba(15,15,35,0.88);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:200;
+    padding:5vw;
+  }
+  .lightbox.open{display:flex;}
+  .lightbox img{
+    max-width:100%;
+    max-height:85vh;
+    border-radius:12px;
+    box-shadow:0 30px 80px rgba(0,0,0,0.5);
+  }
+  .lightbox-close{
+    position:absolute;
+    top:26px; right:32px;
+    color:#fff;
+    font-family:'Space Grotesk', sans-serif;
+    font-size:1rem;
+    cursor:pointer;
+    background:rgba(255,255,255,0.1);
+    border-radius:100px;
+    width:40px; height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .lightbox-close:hover{background:rgba(255,255,255,0.2);}
+
+  @media (max-width:640px){
+    .shot-thumb{width:100%;}
+  }
 </style>
 </head>
 <body>
@@ -676,6 +748,20 @@
           <span class="tech-tag">AWS S3</span>
           <span class="tech-tag">SQL</span>
         </div>
+        <div class="shot-row">
+          <div class="shot-thumb" data-full="assets/autopal-validation-tool.png">
+            <img src="assets/autopal-validation-tool.png" alt="Auto Pal property validation tool showing a floor plan and convertible-status form">
+            <div class="shot-cap">VALIDATION TOOL</div>
+          </div>
+          <div class="shot-thumb" data-full="assets/autopal-engine-dashboard.png">
+            <img src="assets/autopal-engine-dashboard.png" alt="Auto Pal engine dashboard with source summary table and status donut charts">
+            <div class="shot-cap">ENGINE DASHBOARD</div>
+          </div>
+          <div class="shot-thumb" data-full="assets/autopal-error-log-viewer.png">
+            <img src="assets/autopal-error-log-viewer.png" alt="Auto Pal error log viewer with error summary table and bar chart">
+            <div class="shot-cap">ERROR LOG VIEWER</div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -722,6 +808,11 @@
   </div>
 </section>
 <canvas id="confettiCanvas" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9998;"></canvas>
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-close" id="lightboxClose">✕</div>
+  <img id="lightboxImg" src="" alt="Enlarged project screenshot">
+</div>
 
 <footer>© 2026 Sidharth S S — built with data, coffee, and a bit of Plotly.</footer>
 
@@ -835,7 +926,20 @@
   });
   heroSection.addEventListener('mouseleave', () => spotlight.classList.remove('active'));
 
-  /* ---- Click ripple anywhere on the page ---- */
+  /* ---- Screenshot lightbox ---- */
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  document.querySelectorAll('.shot-thumb').forEach(thumb => {
+    thumb.addEventListener('click', () => {
+      lightboxImg.src = thumb.getAttribute('data-full');
+      lightbox.classList.add('open');
+    });
+  });
+  function closeLightbox(){ lightbox.classList.remove('open'); lightboxImg.src = ''; }
+  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+
   const rippleColors = ['#FF6B4A', '#2EC4B6', '#FFD23F', '#8B6BFF'];
   document.addEventListener('click', (e) => {
     const ripple = document.createElement('div');
