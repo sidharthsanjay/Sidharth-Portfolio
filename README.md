@@ -23,7 +23,7 @@ Open http://localhost:3000.
 
 ```bash
 npm run lint        # ESLint (next/core-web-vitals + TypeScript)
-npm run typecheck   # tsc --noEmit
+npm run typecheck   # next typegen, then tsc --noEmit
 npm run build       # static export to ./out
 npm run preview     # serve ./out
 ```
